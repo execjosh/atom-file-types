@@ -1,5 +1,7 @@
 {basename, extname} = require 'path'
 
+CONFIG_KEY = 'file-types'
+
 module.exports =
   debug: true
 
@@ -8,8 +10,10 @@ module.exports =
   _off: []
 
   activate: (state) ->
+    @_off.push atom.config.observe CONFIG_KEY, =>
+      @loadConfig atom.config.get CONFIG_KEY
+
     @_off.push atom.workspaceView.eachEditorView (view) =>
-      @loadConfig atom.config.get 'file-types'
       editor = view.getEditor()
       @_tryToSetGrammar editor
 
