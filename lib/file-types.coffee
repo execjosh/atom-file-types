@@ -5,14 +5,16 @@ module.exports =
 
   fileTypes: {}
 
+  _off: []
+
   activate: (state) ->
-    @_off = atom.workspaceView.eachEditorView (view) =>
+    @_off.push atom.workspaceView.eachEditorView (view) =>
       @loadConfig atom.config.get 'file-types'
       editor = view.getEditor()
       @_tryToSetGrammar editor
 
   deactivate: ->
-    @_off?()
+    o?() for o in @_off
 
   serialize: ->
 
