@@ -17,6 +17,11 @@ module.exports =
       editor = view.getEditor()
       @_tryToSetGrammar editor
 
+    @_off.push atom.syntax.on 'grammar-added', (g) =>
+      for fileType, scopeName of @fileTypes when g.scopeName is scopeName
+        for editor in atom.workspace.getEditors()
+          @_tryToSetGrammar editor
+
   deactivate: ->
     o?() for o in @_off
 
