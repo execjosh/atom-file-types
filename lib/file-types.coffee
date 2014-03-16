@@ -19,6 +19,9 @@ module.exports =
 
     @_off.push atom.workspaceView.eachEditorView (view) =>
       editor = view.getEditor()
+      # TODO: Does this cause a memory leak?
+      @_off.push editor.on 'path-changed', =>
+        @_tryToSetGrammar editor
       @_tryToSetGrammar editor
 
     @_off.push atom.syntax.on 'grammar-added', (g) =>
