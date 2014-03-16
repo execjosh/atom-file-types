@@ -1,9 +1,13 @@
 {basename, extname} = require 'path'
+_ = require 'underscore-plus'
 
 CONFIG_KEY = 'file-types'
 
 module.exports =
-  debug: true
+  configDefaults:
+    $debug: no
+
+  debug: no
 
   fileTypes: {}
 
@@ -28,8 +32,13 @@ module.exports =
   serialize: ->
 
   loadConfig: (config = {}) ->
+    config = _.extend {}, @configDefaults, config
+    @debug = config.$debug is yes
     @fileTypes = {}
     for fileType, scopeName of config
+      # Skip special settings
+      # (hopefully this won't conflict with any file types)
+      continue if /^\$/.test fileType
       @fileTypes[".#{fileType}"] = scopeName
     @_log @fileTypes
 
