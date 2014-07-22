@@ -14,8 +14,8 @@ module.exports =
   _off: []
 
   activate: (state) ->
-    @_off.push atom.config.observe CONFIG_KEY, =>
-      @loadConfig atom.config.get CONFIG_KEY
+    @_off.push atom.config.observe CONFIG_KEY, (newValue) =>
+      @loadConfig newValue
 
     @_off.push atom.workspaceView.eachEditorView (view) =>
       editor = view.getEditor()
