@@ -1,5 +1,7 @@
-{basename, extname} = require 'path'
+{basename} = require 'path'
 _ = require 'underscore-plus'
+
+ScopeNameProvider = require './scope-name-provider'
 
 CONFIG_KEY = 'file-types'
 
@@ -9,7 +11,7 @@ module.exports =
 
   debug: no
 
-  fileTypes: {}
+  snp: new ScopeNameProvider()
 
   _off: []
 
@@ -26,8 +28,9 @@ module.exports =
         @_tryToSetGrammar editor
       @_tryToSetGrammar editor
 
+    # Update all editors whenever a grammar registered with us gets loaded
     @_off.push atom.syntax.on 'grammar-added', (g) =>
-      for fileType, scopeName of @fileTypes when g.scopeName is scopeName
+      for scopeName in @snp.getScopeNames() when g.scopeName is scopeName
         for editor in atom.workspace.getEditors()
           @_tryToSetGrammar editor
 
@@ -39,23 +42,26 @@ module.exports =
   loadConfig: (config = {}) ->
     config = _.extend {}, @configDefaults, config
     @debug = config.$debug is yes
-    @fileTypes = {}
+    @snp = new ScopeNameProvider()
     for fileType, scopeName of config
       # Skip special settings
       # (hopefully this won't conflict with any file types)
       continue if /^\$/.test fileType
-      @fileTypes[".#{fileType}"] = scopeName
-    @_log @fileTypes
+
+      # If `fileType` contains a dot, starts with a caret, or ends with a dollar,
+      # we assume it is a regular expression matcher
+      if /(^\^)|(\.)|(\$$)/.test fileType
+        @snp.registerMatcher fileType, scopeName
+      else
+        # Otherwise, we assume it is an extension matcher
+        @snp.registerExtension fileType, scopeName
+    @_log @snp
 
   _tryToSetGrammar: (editor) ->
     filename = basename editor.getPath()
-    ext = extname filename
-    unless ext
-      @_log 'no extension...skipping'
-      return
-    scopeName = @fileTypes[ext]
+    scopeName = @snp.getScopeName filename
     unless scopeName?
-      @_log "no custom scopeName for #{ext}...skipping"
+      @_log "no custom scopeName for #{filename}...skipping"
       return
     g = atom.syntax.grammarForScopeName scopeName
     unless g?
