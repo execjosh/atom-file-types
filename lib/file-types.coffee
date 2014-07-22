@@ -16,6 +16,8 @@ module.exports =
   activate: (state) ->
     @_off.push atom.config.observe CONFIG_KEY, (newValue) =>
       @loadConfig newValue
+      for editor in atom.workspace.getEditors()
+        @_tryToSetGrammar editor
 
     @_off.push atom.workspaceView.eachEditorView (view) =>
       editor = view.getEditor()
