@@ -30,6 +30,70 @@ your `config.cson` as follows:
 
 *NOTE:* Extension Matchers take priority over RegExp Matchers.
 
+# Scope Names
+
+The scope name for a grammar can be found in the settings for the corresponding
+language package.  For example, the scope name for CoffeeScript's grammar (as
+provided by the Language Coffee Script package) is `source.coffee`.
+
+To get a list of all scope names registered in your Atom instance, open the
+Developer Tools Console and execute the following:
+
+```javascript
+Object.keys(atom.syntax.grammarsByScopeName).sort().join('\n')
+```
+
+Here is a list of the scope names available by default in Atom v0.120.0:
+
+ *  source.c
+ *  source.c++
+ *  source.coffee
+ *  source.css
+ *  source.css.less
+ *  source.css.scss
+ *  source.gfm
+ *  source.git-config
+ *  source.go
+ *  source.java
+ *  source.java-properties
+ *  source.js
+ *  source.js.rails source.js.jquery
+ *  source.js.regexp
+ *  source.json
+ *  source.litcoffee
+ *  source.makefile
+ *  source.objc
+ *  source.objc++
+ *  source.perl
+ *  source.plist
+ *  source.python
+ *  source.regexp.python
+ *  source.ruby
+ *  source.ruby.rails
+ *  source.ruby.rails.rjs
+ *  source.sass
+ *  source.shell
+ *  source.sql
+ *  source.sql.ruby
+ *  source.strings
+ *  source.toml
+ *  source.yaml
+ *  text.git-commit
+ *  text.git-rebase
+ *  text.html.basic
+ *  text.html.erb
+ *  text.html.jsp
+ *  text.html.php
+ *  text.html.ruby
+ *  text.hyperlink
+ *  text.junit-test-report
+ *  text.plain
+ *  text.plain.null-grammar
+ *  text.todo
+ *  text.xml
+ *  text.xml.plist
+ *  text.xml.xsl
+
 # Caveats
 
 You probably don't want to assign the same file type to multiple languages...
