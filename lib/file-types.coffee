@@ -70,6 +70,6 @@ module.exports =
     editor.setGrammar g
 
   _log: (argv...) ->
-    # return unless @debug
+    return unless @debug
     argv.unshift '[file-types]'
     console.debug.apply console, argv
