@@ -40,7 +40,7 @@ To get a list of all scope names registered in your Atom instance, open the
 Developer Tools Console and execute the following:
 
 ```javascript
-Object.keys(atom.syntax.grammarsByScopeName).sort().join('\n')
+Object.keys(atom.grammars.grammarsByScopeName).sort().join('\n')
 ```
 
 Here is a list of the scope names available by default in Atom v0.120.0:
