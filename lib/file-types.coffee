@@ -1,5 +1,4 @@
 {basename} = require 'path'
-_ = require 'underscore-plus'
 
 ScopeNameProvider = require './scope-name-provider'
 
