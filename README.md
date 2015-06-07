@@ -43,17 +43,21 @@ Developer Tools Console and execute the following:
 Object.keys(atom.grammars.grammarsByScopeName).sort().join('\n')
 ```
 
-Here is a list of the scope names available by default in Atom v0.120.0:
+Here is a list of the scope names available by default in Atom v0.207.0:
 
  *  source.c
- *  source.c++
+ *  source.clojure
  *  source.coffee
+ *  source.cpp
+ *  source.cs
  *  source.css
  *  source.css.less
  *  source.css.scss
+ *  source.csx
  *  source.gfm
  *  source.git-config
  *  source.go
+ *  source.gotemplate
  *  source.java
  *  source.java-properties
  *  source.js
@@ -62,9 +66,11 @@ Here is a list of the scope names available by default in Atom v0.120.0:
  *  source.json
  *  source.litcoffee
  *  source.makefile
+ *  source.nant-build
  *  source.objc
- *  source.objc++
+ *  source.objcpp
  *  source.perl
+ *  source.perl6
  *  source.plist
  *  source.python
  *  source.regexp.python
@@ -74,6 +80,7 @@ Here is a list of the scope names available by default in Atom v0.120.0:
  *  source.sass
  *  source.shell
  *  source.sql
+ *  source.sql.mustache
  *  source.sql.ruby
  *  source.strings
  *  source.toml
@@ -82,13 +89,18 @@ Here is a list of the scope names available by default in Atom v0.120.0:
  *  text.git-rebase
  *  text.html.basic
  *  text.html.erb
+ *  text.html.gohtml
  *  text.html.jsp
+ *  text.html.mustache
  *  text.html.php
  *  text.html.ruby
  *  text.hyperlink
  *  text.junit-test-report
  *  text.plain
  *  text.plain.null-grammar
+ *  text.python.console
+ *  text.python.traceback
+ *  text.shell-session
  *  text.todo
  *  text.xml
  *  text.xml.plist
