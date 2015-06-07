@@ -6,8 +6,10 @@ ScopeNameProvider = require './scope-name-provider'
 CONFIG_KEY = 'file-types'
 
 module.exports =
-  configDefaults:
-    $debug: no
+  config:
+    $debug:
+      type: 'boolean'
+      default: no
 
   debug: no
 
@@ -18,20 +20,19 @@ module.exports =
   activate: (state) ->
     @_off.push atom.config.observe CONFIG_KEY, (newValue) =>
       @loadConfig newValue
-      for editor in atom.workspace.getEditors()
+      for editor in atom.workspace.getTextEditors()
         @_tryToSetGrammar editor
 
-    @_off.push atom.workspaceView.eachEditorView (view) =>
-      editor = view.getEditor()
+    @_off.push atom.workspace.getTextEditors().forEach (editor) =>
       # TODO: Does this cause a memory leak?
-      @_off.push editor.on 'path-changed', =>
+      @_off.push editor.onDidChangePath =>
         @_tryToSetGrammar editor
       @_tryToSetGrammar editor
 
     # Update all editors whenever a grammar registered with us gets loaded
-    @_off.push atom.syntax.on 'grammar-added', (g) =>
+    @_off.push atom.grammars.onDidUpdateGrammar (g) =>
       for scopeName in @snp.getScopeNames() when g.scopeName is scopeName
-        for editor in atom.workspace.getEditors()
+        for editor in atom.workspace.getTextEditors()
           @_tryToSetGrammar editor
 
   deactivate: ->
@@ -40,7 +41,6 @@ module.exports =
   serialize: ->
 
   loadConfig: (config = {}) ->
-    config = _.extend {}, @configDefaults, config
     @debug = config.$debug is yes
     @snp = new ScopeNameProvider()
     for fileType, scopeName of config
@@ -63,7 +63,7 @@ module.exports =
     unless scopeName?
       @_log "no custom scopeName for #{filename}...skipping"
       return
-    g = atom.syntax.grammarForScopeName scopeName
+    g = atom.grammars.grammarForScopeName scopeName
     unless g?
       @_log "no grammar for #{scopeName}!?"
       return

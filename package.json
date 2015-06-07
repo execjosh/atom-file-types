@@ -6,7 +6,7 @@
   "repository": "https://github.com/execjosh/atom-file-types",
   "license": "MIT",
   "engines": {
-    "atom": ">0.50.0"
+    "atom": ">=0.185.0 <2.0.0"
   },
   "dependencies": {
     "underscore-plus": "1.x"
