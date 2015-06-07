@@ -6,8 +6,10 @@ ScopeNameProvider = require './scope-name-provider'
 CONFIG_KEY = 'file-types'
 
 module.exports =
-  configDefaults:
-    $debug: no
+  config:
+    $debug:
+      type: 'boolean'
+      default: no
 
   debug: no
 
@@ -39,7 +41,6 @@ module.exports =
   serialize: ->
 
   loadConfig: (config = {}) ->
-    config = _.extend {}, @configDefaults, config
     @debug = config.$debug is yes
     @snp = new ScopeNameProvider()
     for fileType, scopeName of config
