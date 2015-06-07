@@ -1,7 +1,7 @@
 {
   "name": "file-types",
   "main": "./lib/file-types",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Specify additional file types for languages.",
   "repository": "https://github.com/execjosh/atom-file-types",
   "license": "MIT",
