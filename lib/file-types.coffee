@@ -21,7 +21,7 @@ module.exports =
       for editor in atom.workspace.getTextEditors()
         @_tryToSetGrammar editor
 
-    @_off.push atom.workspace.getTextEditors().forEach (editor) =>
+    @_off.push atom.workspace.observeTextEditors (editor) =>
       # TODO: Does this cause a memory leak?
       @_off.push editor.onDidChangePath =>
         @_tryToSetGrammar editor
