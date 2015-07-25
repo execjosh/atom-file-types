@@ -29,10 +29,12 @@ module.exports =
       @_tryToSetGrammar editor
 
     # Update all editors whenever a grammar registered with us gets loaded
-    @_off.push atom.grammars.onDidUpdateGrammar (g) =>
+    updateEditorGrammars = (g) =>
       for scopeName in @snp.getScopeNames() when g.scopeName is scopeName
         for editor in atom.workspace.getTextEditors()
           @_tryToSetGrammar editor
+    @_off.push atom.grammars.onDidAddGrammar updateEditorGrammars
+    @_off.push atom.grammars.onDidUpdateGrammar updateEditorGrammars
 
   deactivate: ->
     o?() for o in @_off
