@@ -20,7 +20,16 @@ class ScopeNameProvider
 
   getScopeName: (filename) ->
     ext = extname filename
-    scopeName = @_exts[ext]
+
+    matches = Object.keys(@_exts).filter (e) ->
+      e.toLowerCase() is ext.toLowerCase()
+    if matches.length >= 1
+      scopeName = @_exts[matches[0]]
+      if matches.length > 1
+        atom.notifications.addWarning '[file-types] Multiple Matches',
+          detail: "Assuming '#{matches[0]}' (#{scopeName}) for file '#{filename}'."
+          dismissable: true
+
     return scopeName if scopeName?
 
     @_matchFilename filename
