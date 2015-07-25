@@ -13,9 +13,8 @@ class ScopeNameProvider
     return  # void
 
   registerMatcher: (matcher, scopeName) ->
-    regexp = new RegExp matcher
     @_matchers[scopeName] ?= []
-    @_matchers[scopeName].push regexp
+    @_matchers[scopeName].push matcher
     @_scopeNames[scopeName] = scopeName
     return  # void
 
@@ -36,4 +35,5 @@ class ScopeNameProvider
   _matchFilename: (filename) ->
     for scopeName, matchers of @_matchers
       for matcher in matchers
-        return scopeName if matcher.test filename
+        regexp = new RegExp matcher, 'i'
+        return scopeName if regexp.test filename
