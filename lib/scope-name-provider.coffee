@@ -13,18 +13,29 @@ class ScopeNameProvider
     return  # void
 
   registerMatcher: (matcher, scopeName) ->
-    regexp = new RegExp matcher
     @_matchers[scopeName] ?= []
-    @_matchers[scopeName].push regexp
+    @_matchers[scopeName].push matcher
     @_scopeNames[scopeName] = scopeName
     return  # void
 
-  getScopeName: (filename) ->
+  getScopeName: (filename, opts = {}) ->
     ext = extname filename
-    scopeName = @_exts[ext]
+
+    if opts.caseSensitive
+      scopeName = @_exts[ext]
+    else
+      matches = Object.keys(@_exts).filter (e) ->
+        e.toLowerCase() is ext.toLowerCase()
+      if matches.length >= 1
+        scopeName = @_exts[matches[0]]
+        if matches.length > 1
+          atom.notifications.addWarning '[file-types] Multiple Matches',
+            detail: "Assuming '#{matches[0]}' (#{scopeName}) for file '#{filename}'."
+            dismissable: true
+
     return scopeName if scopeName?
 
-    @_matchFilename filename
+    @_matchFilename filename, opts
 
   getScopeNames: ->
     Object.keys @_scopeNames
@@ -33,7 +44,11 @@ class ScopeNameProvider
   # private
   #
 
-  _matchFilename: (filename) ->
+  _matchFilename: (filename, opts = {}) ->
     for scopeName, matchers of @_matchers
       for matcher in matchers
-        return scopeName if matcher.test filename
+        if opts.caseSensitive
+          regexp = new RegExp matcher
+        else
+          regexp = new RegExp matcher, 'i'
+        return scopeName if regexp.test filename

@@ -9,6 +9,9 @@ module.exports =
     $debug:
       type: 'boolean'
       default: no
+    $caseSensitive:
+      type: 'boolean'
+      default: no
 
   debug: no
 
@@ -43,6 +46,7 @@ module.exports =
 
   loadConfig: (config = {}) ->
     @debug = config.$debug is yes
+    @caseSensitive = config.$caseSensitive is yes
     @snp = new ScopeNameProvider()
     for fileType, scopeName of config
       # Skip special settings
@@ -60,7 +64,7 @@ module.exports =
 
   _tryToSetGrammar: (editor) ->
     filename = basename editor.getPath()
-    scopeName = @snp.getScopeName filename
+    scopeName = @snp.getScopeName filename, caseSensitive: @caseSensitive
     unless scopeName?
       @_log "no custom scopeName for #{filename}...skipping"
       return
