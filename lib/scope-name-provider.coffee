@@ -18,8 +18,8 @@ class ScopeNameProvider
     @_scopeNames[scopeName] = scopeName
     return  # void
 
-  getScopeName: (filename, opts = {}) ->
-    ext = extname filename
+  getScopeName: (path, opts = {}) ->
+    ext = extname path
 
     if opts.caseSensitive
       scopeName = @_exts[ext]
@@ -30,12 +30,12 @@ class ScopeNameProvider
         scopeName = @_exts[matches[0]]
         if matches.length > 1
           atom.notifications.addWarning '[file-types] Multiple Matches',
-            detail: "Assuming '#{matches[0]}' (#{scopeName}) for file '#{filename}'."
+            detail: "Assuming '#{matches[0]}' (#{scopeName}) for file '#{path}'."
             dismissable: true
 
     return scopeName if scopeName?
 
-    @_matchFilename filename, opts
+    @_matchFilename path, opts
 
   getScopeNames: ->
     Object.keys @_scopeNames
@@ -44,7 +44,9 @@ class ScopeNameProvider
   # private
   #
 
+  _matchFilename: (path, opts = {}) ->
     regexpOptions = if opts.caseSensitive then 'i' else ''
+    filename = basename path
     for scopeName, matchers of @_matchers
       for matcher in matchers
         regexp = new RegExp matcher, regexpOpts
