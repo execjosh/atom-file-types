@@ -44,11 +44,8 @@ class ScopeNameProvider
   # private
   #
 
-  _matchFilename: (filename, opts = {}) ->
+    regexpOptions = if opts.caseSensitive then 'i' else ''
     for scopeName, matchers of @_matchers
       for matcher in matchers
-        if opts.caseSensitive
-          regexp = new RegExp matcher
-        else
-          regexp = new RegExp matcher, 'i'
+        regexp = new RegExp matcher, regexpOpts
         return scopeName if regexp.test filename
