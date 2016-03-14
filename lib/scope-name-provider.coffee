@@ -1,4 +1,4 @@
-{extname} = require 'path'
+{basename,extname,sep} = require 'path'
 
 module.exports =
 class ScopeNameProvider
@@ -49,5 +49,10 @@ class ScopeNameProvider
     filename = basename path
     for scopeName, matchers of @_matchers
       for matcher in matchers
-        regexp = new RegExp matcher, regexpOpts
+        if matcher.charAt 0 == '/'
+          if sep == '\\'
+            matcher = matcher.replace('/', '\\\\')
+          regexp = new RegExp matcher, regexpOptions
+          return scopeName if regexp.test path
+        regexp = new RegExp matcher, regexpOptions
         return scopeName if regexp.test filename

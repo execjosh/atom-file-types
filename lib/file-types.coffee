@@ -51,9 +51,9 @@ module.exports =
       # (hopefully this won't conflict with any file types)
       continue if /^\$/.test fileType
 
-      # If `fileType` contains a dot, starts with a caret, or ends with a dollar,
-      # we assume it is a regular expression matcher
-      if /(^\^)|(\.)|(\$$)/.test fileType
+      # If `fileType` contains a dot, starts with a caret or forward slash,
+      # or ends with a dollar, we assume it is a regular expression matcher
+      if /(^\^)|(\.)|(\/)|(\$$)/.test fileType
         @snp.registerMatcher fileType, scopeName
       else
         # Otherwise, we assume it is an extension matcher
