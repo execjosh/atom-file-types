@@ -4,14 +4,24 @@ Specify additional file types for languages.
 
 ## Extension Matchers
 
-Drop the dot before the extension to use extension matchers.
+To map a filetype to a new language, use the `file-types` option. Specify the extension
+(without a dot) as a key, and the new default extension as the value.
 
-For example, you can associate `.ex_em_el` with `text.xml` in your `config.cson`
-as follows:
+For example, the `.hbs` extension defaults to the `handlebars` grammer. To change it to
+default to `html-htmlbars` (installed separately), open your `config.cson` (via the `Atom
+-> Config...` menu) and add the following rule:
 
 ```cson
-'file-types':
-  'ex_em_el': 'text.xml'
+"*": # make sure to put all 'file-types' options under the "*" key
+  'file-types':
+    'hbs': 'text.html.htmlbars'
+```
+
+To see all available grammers registered in your Atom instance, open the
+Developer Tools Console and execute the following:
+
+```javascript
+console.log(Object.keys(atom.grammars.grammarsByScopeName).sort().join("\n"))
 ```
 
 ## RegExp Matchers
