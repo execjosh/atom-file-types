@@ -2,6 +2,8 @@
 
 Specify additional file types for languages.
 
+Note: A subset of this functionality is now available directly in Atom - see [Customizing Language Recognition](http://flight-manual.atom.io/using-atom/sections/basic-customization/#_customizing_language_recognition) in the Flight Manual.
+
 ## Extension Matchers
 
 To map a filetype to a new language, use the `file-types` option. Specify the extension
