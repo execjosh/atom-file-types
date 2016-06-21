@@ -39,6 +39,10 @@ describe 'ScopeNameProvider', ->
         expect(snp.getScopeName 'spec-super-human').toEqualNull()
         expect(snp.getScopeName 'super-human-spec').toBe 'test.spec'
 
+      it 'can match escaped dots', ->
+        snp.registerMatcher '_spec\.rb$', 'source.ruby.rspec'
+        expect(snp.getScopeName 'really_cool_controller_spec.rb').toBe 'source.ruby.rspec'
+
   describe 'registered scope name list provision', ->
     it 'initially has no scope names', ->
       expect(snp.getScopeNames()).toEqual []
