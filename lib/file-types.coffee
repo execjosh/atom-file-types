@@ -19,25 +19,9 @@ module.exports =
 
   _off: []
 
+
   activate: (state) ->
-    @_off.push atom.config.observe CONFIG_KEY, (newValue) =>
-      @loadConfig newValue
-      for editor in atom.workspace.getTextEditors()
-        @_tryToSetGrammar editor
-
-    @_off.push atom.workspace.observeTextEditors (editor) =>
-      # TODO: Does this cause a memory leak?
-      @_off.push editor.onDidChangePath =>
-        @_tryToSetGrammar editor
-      @_tryToSetGrammar editor
-
-    # Update all editors whenever a grammar registered with us gets loaded
-    updateEditorGrammars = (g) =>
-      for scopeName in @snp.getScopeNames() when g.scopeName is scopeName
-        for editor in atom.workspace.getTextEditors()
-          @_tryToSetGrammar editor
-    @_off.push atom.grammars.onDidAddGrammar updateEditorGrammars
-    @_off.push atom.grammars.onDidUpdateGrammar updateEditorGrammars
+    @_initialize state
 
   deactivate: ->
     o?() for o in @_off
@@ -61,6 +45,27 @@ module.exports =
         # Otherwise, we assume it is an extension matcher
         @snp.registerExtension fileType, scopeName
     @_log @snp
+
+  _initialize: (state) ->
+    @_off.push atom.config.observe CONFIG_KEY, (newValue) =>
+      @loadConfig newValue
+      for editor in atom.workspace.getTextEditors()
+        @_tryToSetGrammar editor
+
+    @_off.push atom.workspace.observeTextEditors (editor) =>
+      # TODO: Does this cause a memory leak?
+      @_off.push editor.onDidChangePath =>
+        @_tryToSetGrammar editor
+      @_tryToSetGrammar editor
+
+    # Update all editors whenever a grammar registered with us gets loaded
+    updateEditorGrammars = (g) =>
+      for scopeName in @snp.getScopeNames() when g.scopeName is scopeName
+        for editor in atom.workspace.getTextEditors()
+          @_tryToSetGrammar editor
+
+    @_off.push atom.grammars.onDidAddGrammar updateEditorGrammars
+    @_off.push atom.grammars.onDidUpdateGrammar updateEditorGrammars
 
   _tryToSetGrammar: (editor) ->
     filename = basename editor.getPath()
