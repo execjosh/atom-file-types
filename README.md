@@ -55,11 +55,13 @@ Developer Tools Console and execute the following:
 Object.keys(atom.grammars.grammarsByScopeName).sort().join('\n')
 ```
 
-Here is a list of the scope names available by default in Atom v0.207.0:
+Here is a list of the scope names available by default in Atom v1.8.0:
 
  *  source.c
+ *  source.cake
  *  source.clojure
  *  source.coffee
+ *  source.coffee.jsx
  *  source.cpp
  *  source.cs
  *  source.css
@@ -73,8 +75,10 @@ Here is a list of the scope names available by default in Atom v0.207.0:
  *  source.java
  *  source.java-properties
  *  source.js
+ *  source.js.jsx
  *  source.js.rails source.js.jquery
  *  source.js.regexp
+ *  source.js.regexp.replacement
  *  source.json
  *  source.litcoffee
  *  source.makefile
