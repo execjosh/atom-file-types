@@ -19,12 +19,17 @@ module.exports =
 
   _off: []
 
+  _onceAllPackagesActivated: null
 
   activate: (state) ->
-    @_initialize state
+    unless @_onceAllPackagesActivated?
+      @_onceAllPackagesActivated = atom.packages.onDidActivateInitialPackages =>
+        @_initialize state
 
   deactivate: ->
     o?() for o in @_off
+    @_onceAllPackagesActivated.dispose()
+    @_onceAllPackagesActivated = null
 
   serialize: ->
 
