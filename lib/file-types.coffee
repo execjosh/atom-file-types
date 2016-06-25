@@ -1,5 +1,3 @@
-{basename} = require 'path'
-
 ScopeNameProvider = require './scope-name-provider'
 
 CONFIG_KEY = 'file-types'
@@ -42,9 +40,9 @@ module.exports =
       # (hopefully this won't conflict with any file types)
       continue if /^\$/.test fileType
 
-      # If `fileType` contains a dot, starts with a caret, or ends with a dollar,
-      # we assume it is a regular expression matcher
-      if /(^\^)|(\.)|(\$$)/.test fileType
+      # If `fileType` contains a dot, starts with a caret or forward slash,
+      # or ends with a dollar, we assume it is a regular expression matcher
+      if /(^\^)|(\.)|(\/)|(\$$)/.test fileType
         @snp.registerMatcher fileType, scopeName
       else
         # Otherwise, we assume it is an extension matcher
@@ -73,16 +71,16 @@ module.exports =
     @_off.push atom.grammars.onDidUpdateGrammar updateEditorGrammars
 
   _tryToSetGrammar: (editor) ->
-    filename = basename editor.getPath()
-    scopeName = @snp.getScopeName filename, caseSensitive: @caseSensitive
+    path = editor.getPath()
+    scopeName = @snp.getScopeName path, caseSensitive: @caseSensitive
     unless scopeName?
-      @_log "no custom scopeName for #{filename}...skipping"
+      @_log "no custom scopeName for #{path}...skipping"
       return
     g = atom.grammars.grammarForScopeName scopeName
     unless g?
       @_log "no grammar for #{scopeName}!?"
       return
-    @_log "setting #{scopeName} as grammar for #{filename}"
+    @_log "setting #{scopeName} as grammar for #{path}"
     editor.setGrammar g
 
   _log: (argv...) ->
