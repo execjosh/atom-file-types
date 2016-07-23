@@ -19,7 +19,18 @@ class Matcher
     else if /(^\^)|([.|])|(\$$)/.test matcher
       @_regexp = new RegExp "(#{matcher})", regexpOpts
     else
-      # Otherwise, we assume it is an extension matcher
+      # Otherwise, we assume it is an extension matcher, which is now deprecated
+      atom.notifications.addWarning '[file-types] Deprecated Config',
+        dismissable: true
+        detail: """
+          Use explicit regular expressions!
+
+          Deprecated:
+            "#{matcher}": "#{scopeName}"
+
+          Preferred:
+            "\\\\.#{matcher}$": "#{scopeName}"
+          """
       @_regexp = new RegExp "(\\.#{escapeRegExp(matcher)}$)", regexpOpts
 
   match: (string) ->
