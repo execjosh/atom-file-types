@@ -8,7 +8,7 @@ _Note:_ A subset of this functionality is now available directly in Atom--see [C
 
 To map a filetype to a new language, use the `file-types` option. Specify the extension (without a dot) as a key, and the new default extension as the value.
 
-For example, the `.hbs` extension defaults to the `handlebars` grammer. To change it to default to `html-htmlbars` (installed separately), open your `config.cson` (via the `Atom -> Config...` menu) and add the following rule:
+For example, the `.hbs` extension defaults to the `handlebars` grammar. To change it to default to `html-htmlbars` (installed separately), open your `config.cson` (via the `Atom -> Config...` menu) and add the following rule:
 
 ```cson
 "*": # make sure to put all "file-types" options under the "*" key
