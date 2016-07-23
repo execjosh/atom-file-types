@@ -42,13 +42,7 @@ module.exports =
       # (hopefully this won't conflict with any file types)
       continue if /^\$/.test fileType
 
-      # If `fileType` contains a dot, starts with a caret, or ends with a dollar,
-      # we assume it is a regular expression matcher
-      if /(^\^)|(\.)|(\$$)/.test fileType
-        @snp.registerMatcher fileType, scopeName
-      else
-        # Otherwise, we assume it is an extension matcher
-        @snp.registerExtension fileType, scopeName
+      @snp.registerMatcher fileType, scopeName, caseSensitive: @caseSensitive
     @_log @snp
 
   _initialize: (state) ->
@@ -74,7 +68,7 @@ module.exports =
 
   _tryToSetGrammar: (editor) ->
     filename = basename editor.getPath()
-    scopeName = @snp.getScopeName filename, caseSensitive: @caseSensitive
+    scopeName = @snp.getScopeName filename
     unless scopeName?
       @_log "no custom scopeName for #{filename}...skipping"
       return
