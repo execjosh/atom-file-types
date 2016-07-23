@@ -1,41 +1,53 @@
 {extname} = require 'path'
+Matcher = require './matcher'
 
 module.exports =
 class ScopeNameProvider
   constructor: ->
-    @_exts = {}
     @_matchers = {}
     @_scopeNames = {}
 
-  registerExtension: (ext, scopeName) ->
-    @_exts[".#{ext}"] = scopeName
-    @_scopeNames[scopeName] = scopeName
-    return  # void
-
-  registerMatcher: (matcher, scopeName) ->
+  registerMatcher: (matcher, scopeName, opts = {}) ->
     @_matchers[scopeName] ?= []
+    matcher = new Matcher matcher, scopeName, opts
     @_matchers[scopeName].push matcher
     @_scopeNames[scopeName] = scopeName
     return  # void
 
-  getScopeName: (filename, opts = {}) ->
-    ext = extname filename
+  getScopeName: (filename) ->
+    # scopeName : {match, matcher}
+    matches = @_matchFilename filename
+    keys = Object.keys matches
+    len = keys.length
 
-    if opts.caseSensitive
-      scopeName = @_exts[ext]
-    else
-      matches = Object.keys(@_exts).filter (e) ->
-        e.toLowerCase() is ext.toLowerCase()
-      if matches.length >= 1
-        scopeName = @_exts[matches[0]]
-        if matches.length > 1
-          atom.notifications.addWarning '[file-types] Multiple Matches',
-            detail: "Assuming '#{matches[0]}' (#{scopeName}) for file '#{filename}'."
-            dismissable: true
+    # If no scopes matched, return nothing
+    return if len <= 0
 
-    return scopeName if scopeName?
+    # If only one scope matched, return it
+    return keys[0] if len is 1
 
-    @_matchFilename filename, opts
+    # If multiple scopes found...
+
+    # Sort keys by match alphabetically
+    keys.sort (a, b) ->
+      a = matches[a].match
+      b = matches[b].match
+      if a < b
+        -1
+      else if a > b
+        1
+      else
+        0
+
+    # Choose last scopeName
+    scopeName = keys[len - 1]
+
+    # Show a notification
+    atom.notifications.addWarning '[file-types] Multiple Matches',
+      detail: "Assuming '#{scopeName}' for file '#{filename}'.\n\n#{("- '#{m.matcher}': '#{sn}' matched '#{m.match}'" for sn, m of matches).join '\n'}"
+      dismissable: true
+
+    return scopeName
 
   getScopeNames: ->
     Object.keys @_scopeNames
@@ -44,11 +56,40 @@ class ScopeNameProvider
   # private
   #
 
-  _matchFilename: (filename, opts = {}) ->
+  _matchFilename: (filename) ->
+    longestLength = 0
+    longestMatches = {}
+
     for scopeName, matchers of @_matchers
+      # Start with previously longest length found and no match
+      longestLengthForScope = longestLength
+      longestMatchForScope = null
+      longestMatcherForScope = null
+
       for matcher in matchers
-        if opts.caseSensitive
-          regexp = new RegExp matcher
-        else
-          regexp = new RegExp matcher, 'i'
-        return scopeName if regexp.test filename
+        continue unless (match = matcher.match(filename))?
+
+        len = match.length
+
+        # Just skip if less-than longest length for scope
+        continue if len < longestLengthForScope
+
+        # Save match if longest (or equal-to longest) for scope
+        longestLengthForScope = len
+        longestMatchForScope = match
+        longestMatcherForScope = matcher
+
+      # Skip this scope if no matches found
+      continue unless longestMatcherForScope?
+
+      # Reset longest matches if longest
+      if longestLengthForScope > longestLength
+        longestMatches = {}
+
+      # Save the longest match info
+      longestLength = longestLengthForScope
+      longestMatches[scopeName] =
+        match: longestMatchForScope
+        matcher: longestMatcherForScope.toString()
+
+    longestMatches

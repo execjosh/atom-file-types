@@ -10,17 +10,22 @@ describe 'ScopeNameProvider', ->
 
   describe 'scope provision', ->
     it 'provides scope name based on file extension', ->
-      snp.registerExtension 'blah', 'text.plain.test-grammar'
+      snp.registerMatcher 'blah', 'text.plain.test-grammar'
       expect(snp.getScopeName 'hogehoge.blah').toBe 'text.plain.test-grammar'
 
     it 'provides scope name based on regexp matcher', ->
-      snp.registerMatcher 'spec\.coffee$', 'test.coffee.spec'
+      snp.registerMatcher 'spec\\.coffee$', 'test.coffee.spec'
       expect(snp.getScopeName 'super-human-spec.coffee').toBe 'test.coffee.spec'
 
-    it 'gives precedence to file extension above regexp matchers', ->
-      snp.registerExtension 'blah', 'text.plain.test-grammar'
-      snp.registerMatcher 'spec\.blah$', 'test.blah.spec'
-      expect(snp.getScopeName 'super-human-spec.blah').toBe 'text.plain.test-grammar'
+    it 'gives precedence to longest match', ->
+      snp.registerMatcher 'blah', 'text.plain.test-grammar'
+      snp.registerMatcher 'spec\\.blah$', 'test.blah.spec'
+      expect(snp.getScopeName 'super-human-spec.blah').toBe 'test.blah.spec'
+
+    it 'gives precedence to last match for match length tie-breaker', ->
+      snp.registerMatcher 'rb', 'text.plain.test-grammar'
+      snp.registerMatcher '\\.r(a|b)$', 'test.blah.spec'
+      expect(snp.getScopeName 'super-human-spec.rb').toBe 'test.blah.spec'
 
     describe 'regexp matcher', ->
       it 'can match start-of-string', ->
@@ -40,7 +45,7 @@ describe 'ScopeNameProvider', ->
         expect(snp.getScopeName 'super-human-spec').toBe 'test.spec'
 
       it 'can match escaped dots', ->
-        snp.registerMatcher '_spec\.rb$', 'source.ruby.rspec'
+        snp.registerMatcher '_spec\\.rb$', 'source.ruby.rspec'
         expect(snp.getScopeName 'really_cool_controller_spec.rb').toBe 'source.ruby.rspec'
 
   describe 'registered scope name list provision', ->
@@ -48,15 +53,15 @@ describe 'ScopeNameProvider', ->
       expect(snp.getScopeNames()).toEqual []
 
     it 'updates the list as grammars are added', ->
-      snp.registerExtension 'blah', 'text.plain.test-grammar'
+      snp.registerMatcher 'blah', 'text.plain.test-grammar'
       expect(snp.getScopeNames()).toEqual ['text.plain.test-grammar']
 
-      snp.registerExtension 'hogehoge', 'text.plain.null-grammar'
+      snp.registerMatcher 'hogehoge', 'text.plain.null-grammar'
       expect(snp.getScopeNames()).toEqual ['text.plain.test-grammar', 'text.plain.null-grammar']
 
     it 'provides a list of unique grammars', ->
-      snp.registerExtension 'blah', 'text.plain.test-grammar'
+      snp.registerMatcher 'blah', 'text.plain.test-grammar'
       expect(snp.getScopeNames()).toEqual ['text.plain.test-grammar']
 
-      snp.registerExtension 'blah', 'text.plain.test-grammar'
+      snp.registerMatcher 'blah', 'text.plain.test-grammar'
       expect(snp.getScopeNames()).toEqual ['text.plain.test-grammar']
