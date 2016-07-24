@@ -1,5 +1,3 @@
-{basename} = require 'path'
-
 ScopeNameProvider = require './scope-name-provider'
 
 CONFIG_KEY = 'file-types'
@@ -69,16 +67,15 @@ module.exports =
   _tryToSetGrammar: (editor) ->
     fullPath = editor.getPath()
     return unless fullPath?
-    filename = basename fullPath
-    scopeName = @snp.getScopeName filename
+    scopeName = @snp.getScopeName fullPath
     unless scopeName?
-      @_log "no custom scopeName for #{filename}...skipping"
+      @_log "no custom scopeName for #{fullPath}...skipping"
       return
     g = atom.grammars.grammarForScopeName scopeName
     unless g?
       @_log "no grammar for #{scopeName}!?"
       return
-    @_log "setting #{scopeName} as grammar for #{filename}"
+    @_log "setting #{scopeName} as grammar for #{fullPath}"
     editor.setGrammar g
 
   _log: (argv...) ->

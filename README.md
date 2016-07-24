@@ -20,6 +20,15 @@ For example, the `.hbs` extension defaults to the `handlebars` grammar. To overr
     "*.hbs": "text.html.htmlbars"
 ```
 
+Use the double-star-and-slash notation (`**` and `/`) to match against the whole path.
+
+```cson
+"*":
+  "file-types":
+    "**/app/tmpl/*.hbs": "text.html.htmlbars"
+    "**/text_files/*": "text.plain"
+```
+
 ## Precedence
 
 The longest glob is given precedence.
