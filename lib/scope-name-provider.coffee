@@ -7,15 +7,15 @@ class ScopeNameProvider
     @_matchers = {}
     @_scopeNames = {}
 
-  registerMatcher: (matcher, scopeName, opts = {}) ->
+  registerMatcher: (pattern, scopeName, opts = {}) ->
     @_matchers[scopeName] ?= []
-    matcher = new Matcher matcher, scopeName, opts
+    matcher = new Matcher pattern, scopeName, opts
     @_matchers[scopeName].push matcher
     @_scopeNames[scopeName] = scopeName
     return  # void
 
   getScopeName: (filename) ->
-    # scopeName : {match, matcher}
+    # scopeName : pattern
     matches = @_matchFilename filename
     keys = Object.keys matches
     len = keys.length
@@ -30,8 +30,8 @@ class ScopeNameProvider
 
     # Sort keys by match alphabetically
     keys.sort (a, b) ->
-      a = matches[a].match
-      b = matches[b].match
+      a = matches[a]
+      b = matches[b]
       if a < b
         -1
       else if a > b
@@ -44,7 +44,11 @@ class ScopeNameProvider
 
     # Show a notification
     atom.notifications.addWarning '[file-types] Multiple Matches',
-      detail: "Assuming '#{scopeName}' for file '#{filename}'.\n\n#{("- '#{m.matcher}': '#{sn}' matched '#{m.match}'" for sn, m of matches).join '\n'}"
+      detail: """
+        Assuming '#{scopeName}' for file '#{filename}'.
+
+        #{("- '#{p}': '#{sn}'" for sn, p of matches).join '\n'}
+        """
       dismissable: true
 
     return scopeName
@@ -64,11 +68,11 @@ class ScopeNameProvider
       # Start with previously longest length found and no match
       longestLengthForScope = longestLength
       longestMatchForScope = null
-      longestMatcherForScope = null
 
       for matcher in matchers
-        continue unless (match = matcher.match(filename))?
+        continue unless matcher.match(filename)
 
+        match = matcher.toString()
         len = match.length
 
         # Just skip if less-than longest length for scope
@@ -77,10 +81,9 @@ class ScopeNameProvider
         # Save match if longest (or equal-to longest) for scope
         longestLengthForScope = len
         longestMatchForScope = match
-        longestMatcherForScope = matcher
 
       # Skip this scope if no matches found
-      continue unless longestMatcherForScope?
+      continue unless longestMatchForScope?
 
       # Reset longest matches if longest
       if longestLengthForScope > longestLength
@@ -88,8 +91,6 @@ class ScopeNameProvider
 
       # Save the longest match info
       longestLength = longestLengthForScope
-      longestMatches[scopeName] =
-        match: longestMatchForScope
-        matcher: longestMatcherForScope.toString()
+      longestMatches[scopeName] = longestMatchForScope
 
     longestMatches
