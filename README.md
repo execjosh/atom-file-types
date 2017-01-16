@@ -1,5 +1,9 @@
 # file-types package
 
+[![Installs!](https://img.shields.io/apm/dm/file-types.svg)](https://atom.io/packages/file-types)
+[![Version!](https://img.shields.io/apm/v/file-types.svg)](https://atom.io/packages/file-types)
+[![License](https://img.shields.io/apm/l/file-types.svg)](https://github.com/execjosh/atom-file-types/blob/master/LICENSE.md)
+
 Specify additional file types for languages.
 
 _Note:_ A subset of this functionality is now available directly in Atom--see [Customizing Language Recognition](http://flight-manual.atom.io/using-atom/sections/basic-customization/#_customizing_language_recognition) in the Flight Manual.
