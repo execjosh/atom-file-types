@@ -67,7 +67,9 @@ module.exports =
     @_off.push atom.grammars.onDidUpdateGrammar updateEditorGrammars
 
   _tryToSetGrammar: (editor) ->
-    filename = basename editor.getPath()
+    fullPath = editor.getPath()
+    return unless fullPath?
+    filename = basename fullPath
     scopeName = @snp.getScopeName filename
     unless scopeName?
       @_log "no custom scopeName for #{filename}...skipping"
