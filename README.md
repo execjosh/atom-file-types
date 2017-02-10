@@ -6,7 +6,7 @@
 
 Specify additional file types for languages.
 
-_Note:_ A subset of this functionality is now available directly in Atom--see [Customizing Language Recognition](http://flight-manual.atom.io/using-atom/sections/basic-customization/#_customizing_language_recognition) in the Flight Manual.
+_Note:_ A subset of this functionality is now available directly in Atom--see [Customizing Language Recognition](http://flight-manual.atom.io/using-atom/sections/basic-customization/#customizing-language-recognition) in the Flight Manual.
 
 ## Extension Matchers
 
