@@ -31,7 +31,7 @@ An extension matcher will be converted into a RegExp matcher. The example above 
 To see all available grammars registered in your Atom instance, open the Developer Tools Console and execute the following:
 
 ```javascript
-console.log(Object.keys(atom.grammars.grammarsByScopeName).sort().join("\n"))
+console.log(atom.grammars.getGrammars().map(g => g.scopeName).sort().join('\n'))
 ```
 
 ## RegExp Matchers
