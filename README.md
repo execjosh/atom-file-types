@@ -8,47 +8,55 @@ Specify additional file types for languages.
 
 _Note:_ A subset of this functionality is now available directly in Atom--see [Customizing Language Recognition](http://flight-manual.atom.io/using-atom/sections/basic-customization/#customizing-language-recognition) in the Flight Manual.
 
-## Extension Matchers
+# Matchers
 
-To map a filetype to a new language, use the `file-types` option. Specify the extension (without a dot) as a key, and the new default extension as the value.
+To map a filetype to a different language, use the `file-types` option in your `config.json` (via the `Atom -> Config...` menu). Specify a pattern to match for the key (in bash-like glob format) and the new scope name for the value.
 
-For example, the `.hbs` extension defaults to the `handlebars` grammar. To change it to default to `html-htmlbars` (installed separately), open your `config.cson` (via the `Atom -> Config...` menu) and add the following rule:
+For example, the `.hbs` extension defaults to the `handlebars` grammar. To override this to the `text.html.htmlbars` grammar (provided by the separately installable `html-htmlbars`), add the following rule to your `config.cson`:
 
 ```cson
-"*": # make sure to put all "file-types" options under the "*" key
+"*":  # Be sure to put "file-types" under the "*" key
   "file-types":
-    "hbs": "text.html.htmlbars"
+    "*.hbs": "text.html.htmlbars"
 ```
 
-An extension matcher will be converted into a RegExp matcher. The example above is equivalent to the following:
+Use the double-star-and-slash notation (`**` and `/`) to match against the whole path.
 
-```coffee
+```cson
 "*":
   "file-types":
-    "\\.hbs$": "text.html.htmlbars"
+    "**/app/tmpl/*.hbs": "text.html.htmlbars"
+    "**/text_files/*": "text.plain"
 ```
 
-To see all available grammars registered in your Atom instance, open the Developer Tools Console and execute the following:
+## Precedence
 
-```javascript
-console.log(atom.grammars.getGrammars().map(g => g.scopeName).sort().join('\n'))
-```
+The longest glob is given precedence.
 
-## RegExp Matchers
-
-You can match with regular expressions, too. Most JavaScript regular expressions should work; but, the system looks for a dot (`.`), a pipe (`|`), a caret (`^`) at the start, or a dollar (`$`) at the end to identify RegExp matchers.
-
-The RegExp is currently matched against the base name of the file, as opposed to the entire path.
-
-For example, you can associate `/.*_steps\.rb$/` with `source.cucumber.steps` in your `config.cson` as follows:
+For example, with the following settings, all three globs end in `.liquid`.
 
 ```cson
-"*": # make sure to put all "file-types" options under the "*" key
+"*":
   "file-types":
-    "_steps\\.rb$": "source.cucumber.steps"
+    "*.css.liquid": "source.css"
+    "*.liquid": "text.html.basic"
+    "*.scss.liquid": "source.css.scss"
 ```
 
-The longest match is given precedence. If there are multiple matches of equal length, then a warning is displayed and the "last" (alphabetically) match is used.
+Both `*.liquid` and `*.css.liquid` would match a file named `super_awesome_file.css.liquid`; however, since `*.css.liquid` is longest, it wins and the `source.css` scope name would be used.
+
+This is usually not a problem unless multiple globs of equal length match the filename. When that happens, a warning is displayed and the scope name associated with the "alphabetically last" glob is used.
+
+Consider the following settings:
+
+```cson
+"*":
+  "file-types":
+    "*_spec.rb": "source.ruby.rspec"
+    "*_sp?c.rb": "text.plain"
+```
+
+Both of these would match a file named `super_controller_spec.rb`; however, `*_spec.rb` would win because when sorted alphabetically, it comes last (i.e., `"*_sp?c.rb" < "*_spec.rb"`).
 
 # Scope Names
 
@@ -57,7 +65,7 @@ The scope name for a grammar can be found in the settings for the corresponding 
 To get a list of all scope names registered in your Atom instance, open the Developer Tools Console and execute the following:
 
 ```javascript
-Object.keys(atom.grammars.grammarsByScopeName).sort().join('\n')
+console.log(atom.grammars.getGrammars().map(g => g.scopeName).sort().join('\n'))
 ```
 
 Here is a list of the scope names available by default in Atom v1.8.0:

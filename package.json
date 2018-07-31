@@ -5,6 +5,9 @@
   "description": "Specify additional file types for languages.",
   "repository": "https://github.com/execjosh/atom-file-types",
   "license": "MIT",
+  "dependencies": {
+    "minimatch": "^3.0.2"
+  },
   "engines": {
     "atom": ">=0.185.0 <2.0.0"
   }
