@@ -81,4 +81,4 @@ module.exports =
   _log: (argv...) ->
     return unless @debug
     argv.unshift '[file-types]'
-    console.debug.apply console, argv
+    console.log.apply console, argv
